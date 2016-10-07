@@ -2,6 +2,14 @@
 
 ![A boa](https://upload.wikimedia.org/wikipedia/commons/9/90/Boa_constrictor%2C_Va%C5%88kovka%2C_Brno_%282%29.jpg)
 
+## Download
+
+```
+$ git clone https://github.com/ucsd-cse131/02-boa.git
+$ cd 02-boa/
+```
+
+
 In this assignment you'll implement a small language called Boa, which has
 
 **B**-inary **O**-perators **A**-nd conditionals. You'll use an A-Normal Form
