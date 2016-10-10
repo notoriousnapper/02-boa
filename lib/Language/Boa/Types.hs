@@ -64,11 +64,13 @@ import           Language.Boa.UX
 data Reg
   = EAX
   | ESP
+  deriving (Show)
 
 data Arg
   = Const     Int
   | Reg            Reg
   | RegOffset Nat  Reg
+  deriving (Show)
 
 type Nat      = Int
 
@@ -90,6 +92,7 @@ data Instruction
   | IJne    Label
   | IJmp    Label
   | IRet
+  deriving (Show)
 
 --------------------------------------------------------------------------------
 -- | Abstract syntax of the Adder language
