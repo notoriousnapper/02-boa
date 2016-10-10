@@ -53,7 +53,6 @@ The concrete syntax of Boa is:
 <bindings> :=
   | <identifier> = <expr>
   | <identifier> = <expr>, <bindings>
-}
 ```
 
 As in `adder`, a `let` expression can have one _or more_ bindings.
