@@ -104,6 +104,7 @@ type Id = Text
 -- | `Tag` are used to tag each `If`
 type Tag = Int
 
+
 -- | `Prim1` are unary operations
 data Prim1
   = Add1
@@ -128,6 +129,7 @@ data Expr a
     deriving (Show, Functor)
 
 -- | Bind represent the let- or function-params.
+
 
 data Bind a
   = Bind !Id a
@@ -189,7 +191,7 @@ ppBinds bs = L.intercalate ", " [ printf "%s = %s" (pprint x) (pprint v) | (x, v
 --------------------------------------------------------------------------------
 label :: Expr a -> Expr (a, Tag)
 --------------------------------------------------------------------------------
-label = snd . go 0
+label e = snd ( go 1000 e)
   where
     go i (Number n l)      = labelTop i  l (Number n)
 
@@ -252,11 +254,17 @@ type ImmExpr = Expr
 type Bare     = Expr SourceSpan
 type BareBind = Bind SourceSpan
 
+
+
+
+
+
 instance Located Bare where
   sourceSpan = getLabel
 
 instance Located BareBind where
   sourceSpan (Bind _ l) = l
+
 
 --------------------------------------------------------------------------------
 -- | Functions for accessing the "environment" (stack)
@@ -290,6 +298,8 @@ fromListEnv :: [(Id, Int)] -> Env
 fromListEnv bs = Env bs n
   where
     n          = maximum (0 : [i | (_, i) <- bs])
+
+
 
 --------------------------------------------------------------------------------
 -- | File Extensions

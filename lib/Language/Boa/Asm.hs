@@ -31,11 +31,19 @@ instrAsm (IMov dst val) = printf "  mov %s, %s"  (argAsm dst) (argAsm val)
 instrAsm (IAdd dst val) = printf "  add %s, %s"  (argAsm dst) (argAsm val)
 instrAsm (ISub dst val) = printf "  sub %s, %s"  (argAsm dst) (argAsm val)
 instrAsm (IMul dst val) = printf "  imul %s, %s" (argAsm dst) (argAsm val)
-instrAsm (ICmp a1 a2)   = error "TBD:instrAsm:cmp"
-instrAsm (ILabel l)     = error "TBD:instrAsm:label"
-instrAsm (IJe  l)       = error "TBD:instrAsm:je"
-instrAsm (IJne  l)      = error "TBD:instrAsm:jne"
-instrAsm (IJmp l)       = error "TBD:instrAsm:jmp"
+instrAsm (ICmp a1 a2)   = printf "  cmp %s, %s"  (argAsm a1)  (argAsm a2)
+-- error "TBD:instrAsm:cmp"
+instrAsm (ILabel l)     = printf "%s:"          (labelAsm l)
+-- Forgot to add colon --> Part of assembly
+-- Check produced assembly, add tests
+
+-- error "TBD:instrAsm:label"
+instrAsm (IJe  l)       = printf "  je %s"       (labelAsm l)
+-- error "TBD:instrAsm:je"
+instrAsm (IJne  l)      = printf "  jne %s"      (labelAsm l)
+-- error "TBD:instrAsm:jne"
+instrAsm (IJmp l)       = printf "  jmp %s"      (labelAsm l)
+-- error "TBD:instrAsm:jmp"
 instrAsm IRet           =        "  ret"
 
 regAsm :: Reg -> Text

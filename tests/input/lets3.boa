@@ -1,0 +1,6 @@
+let x =
+  let y =
+    let z = 42
+      in z
+        in y + 3
+          in x 

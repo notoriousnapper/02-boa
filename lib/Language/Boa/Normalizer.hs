@@ -16,6 +16,12 @@ anormal :: Expr a -> AnfExpr a
 anormal e = snd (anf 0 e)
 
 
+
+-- Given function to study, not to use
+-- lets :: [(Id, AnfE)] -> AnfE -> AnfE
+-- lets [] e'         = e
+-- lets ((x,e):bs) e' = Let x e (lets bs e')
+
 --------------------------------------------------------------------------------
 -- | `anf i e` takes as input a "start" counter `i` and expression `e` and
 --   returns an output `(i', e')` where
@@ -28,13 +34,26 @@ anf i (Number n l)      = (i, Number n l)
 
 anf i (Id     x l)      = (i, Id     x l)
 
-anf i (Let x e b l)     = error "TBD:anf:let"
+
+-- Should get immediate values from x, b, and bindings from both
+anf i (Let x e b l)     =  ( i'', (Let x e' b' l))
+  where
+    (i' , e') = anf i e
+    (i'', b') = anf i' b
+-- error "TBD:anf:prim2"
 
 anf i (Prim1 o e l)     = (i', stitch bs  (Prim1 o ae l))
+-- stitch does the reverse of "lets"
   where
     (i', bs, ae)        = imm i e
 
-anf i (Prim2 o e1 e2 l) = error "TBD:anf:prim2"
+-- Edited by self
+anf i (Prim2 o e1 e2 l) = (i'', stitch (bs2 ++ bs1)
+                            (Prim2 o e1' e2' l))
+  where
+    (i'   , bs1, e1')      = imm i  e1
+    (i''  , bs2, e2')      = imm i' e2
+
 
 anf i (If c e1 e2 l)    = (i''', stitch bs  (If c' e1' e2' l))
   where
@@ -76,17 +95,39 @@ imms i (e:es)       = (i'', bs' ++ bs, e' : es' )
 --------------------------------------------------------------------------------
 imm :: Int -> AnfExpr a -> (Int, Binds a, ImmExpr a)
 --------------------------------------------------------------------------------
-imm i (Number n l)      = error "TBD:imm:Number"
-
-imm i (Id x l)          = error "TBD:imm:Id"
-
+-- Base Cases, Id or Number, should have 0 binding
+imm i (Number n l)      = (i, [], (Number n l))
+-- immExp i (Number n l) l  -- Apparently doesn't return correct binding
+imm i (Id x l)          = (i, [], (Id x l))
+-- error "TBD:imm:prim2"
+-- Good function to learn from --
 imm i (Prim1 o e1 l)    = (i'', bs, mkId v l)
   where
     (i' , b1s, v1)      = imm i e1
     (i'', v)            = fresh l i'
-    bs                  = (v, (Prim1 o v1 l, l)) : b1s
+    bs                  = (v, (Prim1 o v1 l, l)) : b1s -- Has to be this way **
 
-imm i (Prim2 o e1 e2 l) = error "TBD:imm:prim2"
+-- !Error you did, you put b1s in front of b2s, when most recent binding is b2s
+imm i (Prim2 o e1 e2 l) = ( i''' , bs , mkId v l   )
+  where
+    (i' , b1s, v1)      = imm i e1
+    (i'' , b2s, v2)     = imm i' e2
+    b3s                 = b2s++b1s
+    (i''', v)           = fresh l i''
+    bs                  = (v, (Prim2 o v1 v2 l, l)) : b3s -- Has to be this way **
+
+
+
+
+    -- (i' , b1s, v1)      = imm i e1
+    -- (i'', v)            = fresh l i'
+    -- bs                  = (v, (Prim1 o v1 l, l)) : b1s -- Has to be this way **
+    -- (i''' , b2s, v2)    = imm i e1
+    -- (i'''', v')         = fresh l i'
+    -- bs'                 = (v', (Prim1 o v2 l, l)) : b2s -- Has to be this way **
+    -- bss                 = bs'++bs
+
+
 
 imm i e@(If _ _ _  l)   = immExp i e l
 

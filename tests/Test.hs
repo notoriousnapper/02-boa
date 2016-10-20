@@ -61,7 +61,9 @@ boaTests   sc =
 
 yourTests sc =
   [ -- fill in your tests here
+    mkTest sc "lets3"       File                     (Right "45"),
+    mkTest sc "megaMult"    File                     (Right "82"),
+    mkTest sc "unboundZ"      (Code "z")               (Left "Unbound variable 'z'"),
+    mkTest sc "unboundX"      (Code "let z = 10 in x") (Left "Unbound variable 'x'"),
+    mkTest sc "unboundIf"     (Code "if x: 4 else: 2") (Left "Unbound variable 'x'")
   ]
-
-
-
